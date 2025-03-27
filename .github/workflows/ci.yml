@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    - id: restore
+      name: Restore node_modules
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          node_modules
+        key: ${{ hashFiles('yarn.lock') }}
+        restore-keys: ${{ hashFiles('yarn.lock') }}-
+    - id: install
+      if: >
+        steps.restore.outputs.cache-matched-key == ''
+      name: Install deps
+      run: yarn
+    - if: >
+        steps.install.outcome == 'success'
+      name: Save node_modules
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          node_modules
+        key: ${{ hashFiles('yarn.lock') }}
+
+    - name: Lint
+      run: yarn lint
+    - name: Test
+      run: yarn test
+
+    - id: build
+      if: >
+        github.event_name == 'push'
+        && github.repository == 'ph-fritsche/github-mock'
+        && contains('refs/heads/main,refs/heads/beta,refs/heads/alpha', github.ref)
+      name: Build
+      run: yarn build
+    - if: >
+        steps.build.outcome == 'success'
+      name: Release
+      uses: ph-fritsche/action-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
