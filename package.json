@@ -2,6 +2,7 @@
     "name": "github-mock",
     "version": "0.0.0-semantic",
     "author": "Philipp Fritsche <ph.fritsche@gmail.com>",
+    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/ph-fritsche/github-mock"
