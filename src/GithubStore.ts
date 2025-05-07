@@ -17,6 +17,7 @@ export class GithubStore {
         readonly htmlOrigin = 'https://github.com',
         readonly contentOrigin = 'https://raw.githubusercontent.com',
         readonly avatarsOrigin = 'https://avatars.githubusercontent.com',
+        readonly uploadOrigin = 'https://uploads.github.com',
     ) {
         this.schema = addResolvers(this, store.schema)
     }
